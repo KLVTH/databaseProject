@@ -15,7 +15,7 @@ public class App {
     public static void main(String[] args) throws Exception {
         
         Funcionario funcionario = new Funcionario();
-        funcionario.setMatricula("312312141");
+        funcionario.setMatricula("021638");
         funcionario.setNome("Thiago");
         funcionario.setIdade(20);
         
