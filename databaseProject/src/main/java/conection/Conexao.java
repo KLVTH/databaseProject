@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package conection;
 
 import java.sql.Connection;
@@ -14,8 +10,9 @@ import java.sql.SQLException;
  */
 public class Conexao {
 
-    private static final String url = "jdbc:mysql://localhost:3306/databaseproject";
+    /* credenciais usadas para se conectar ao banco de dados*/
     private static final String user = "root";
+    private static final String url = "jdbc:mysql://localhost:3306/databaseproject";
     private static final String password = "";
 
     private static Connection conn;
@@ -28,8 +25,8 @@ public class Conexao {
             } else {
                 return conn;
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
         
