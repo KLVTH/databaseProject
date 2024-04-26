@@ -14,9 +14,10 @@ import java.sql.SQLException;
  */
 public class Conexao {
 
+    //! lembrem de mudar o url, user e password de acordo com o mysql de vcs
     private static final String url = "jdbc:mysql://localhost:3306/databaseproject";
     private static final String user = "root";
-    private static final String password = "";
+    private static final String password = "Kaua1369";
 
     private static Connection conn;
 
