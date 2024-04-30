@@ -10,14 +10,16 @@ import entity.*;
 public class App {
     public static void main(String[] args) throws Exception {
 
-        //Operations.cadastrarFuncionario(new Funcionario("04348", "Kaua", 19));
+        // Operations.removerFuncionario("id","11");
+
+        // Operations.cadastrarFuncionario(new Funcionario("043", "Kaua", 19));
+
+        // Operations.cadastrarGerente(new Gerente("312", "Wesley", 24, "TI"));
+
+        //Operations.listarGerentes();
+        //Operations.cadastrarGerente(new Gerente("231", "Kaua", 19, "TI"));
+        Operations.listarGerentes();
+        Operations.listarOperador();
         
-        Operations.listarFuncionarios(); 
-
-        Operations.removerFuncionario("id","7");
-
-        /*! retorna uma exceção por que a tabela não foi criada
-        Operations.cadastrarGerente(new Gerente("04348", "Kaua", 19, "TI"));
-        */
     }
 }
