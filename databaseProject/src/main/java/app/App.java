@@ -1,11 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package app;
 
-import DAO.FuncionarioDAO;
-import entity.Funcionario;
+import DAO.Operations;
+import entity.*;
 
 /**
  *
@@ -13,13 +9,17 @@ import entity.Funcionario;
  */
 public class App {
     public static void main(String[] args) throws Exception {
-        
-        Funcionario funcionario = new Funcionario();
-        funcionario.setMatricula("021638");
-        funcionario.setNome("Thiago");
-        funcionario.setIdade(20);
-        
-        new FuncionarioDAO().cadastrarFuncionario(funcionario);
+
+        // Operations.removerFuncionario("id","11");
+
+        // Operations.cadastrarFuncionario(new Funcionario("043", "Kaua", 19));
+
+        // Operations.cadastrarGerente(new Gerente("312", "Wesley", 24, "TI"));
+
+        //Operations.listarGerentes();
+        //Operations.cadastrarGerente(new Gerente("231", "Kaua", 19, "TI"));
+        Operations.listarGerentes();
+        Operations.listarOperador();
         
     }
 }
