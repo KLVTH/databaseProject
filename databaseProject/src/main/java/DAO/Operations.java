@@ -3,6 +3,8 @@ package DAO;
 import java.sql.*;
 import conection.Conexao;
 import entity.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -27,42 +29,38 @@ public class Operations {
         
     }
     
-    public static void listarFuncionarios() {
+    public static DefaultListModel<String> listarFuncionarios() {
+        DefaultListModel<String> listaFuncionarios = new DefaultListModel<>();
         try {
             /*Cria um objeto Statement a partir do método "Conexao.getConexao", este objeto Statement não possui atributos porém tem vários métodos para executar instruções sql: https://docs.oracle.com/javase/8/docs/api/java/sql/Statement.html */
             Statement stmt = Conexao.getConexao().createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM funcionario");
-
             while (rs.next()) {
                 String coluna1 = rs.getString("id");
                 String coluna2 = rs.getString("matricula");
                 String coluna3 = rs.getString("nome");
                 String coluna4 = String.valueOf(rs.getString("idade"));
-                System.out.println(
-                        "ID: " + coluna1 + ", matricula: " + coluna2 + " nome: " + coluna3 + " idade: " + coluna4);
+                String funcionario = 
+                        "ID: " + coluna1 + " | matricula: " + coluna2 + " | nome: " + coluna3 + " | idade: " + coluna4;
+                listaFuncionarios.addElement(funcionario);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return listaFuncionarios;
     }
     
-    public static void removerFuncionario(String maneira, String variavel) {
-        String sql = "";
-        if (maneira.equals("id")) {
-            sql = "DELETE FROM funcionario WHERE id = ?";
-        } else if(maneira.equals("matricula")) {
-            sql = "DELETE FROM funcionario WHERE matricula = ?";
-        } else if (maneira.equals("nome")) {
-            sql = "DELETE FROM funcionario WHERE nome = ?";
-        }
-
+    public static void removerFuncionario(String id) {
+        String sql = "DELETE FROM funcionario WHERE id = ?";
+        
         try (PreparedStatement ps = Conexao.getConexao().prepareStatement(sql)) {
             
-            ps.setString(1, variavel);
+            ps.setString(1, id);
             int rowsAffected = ps.executeUpdate();
             
             if (rowsAffected > 0) {
-                System.out.println("Funcionário removido com sucesso.");
+                JOptionPane.showMessageDialog(null, "Funcionário removido com sucesso");
+
             } else {
                 System.out.println("Nenhum funcionário encontrado com o ID fornecido.");
             }
@@ -73,63 +71,70 @@ public class Operations {
     }
 
     public static void cadastrarGerente(Gerente gerente){
-        String sql = "INSERT INTO gerente(matricula, nome, idade, departamento) VALUES(?, ?, ?, ?)";
-        PreparedStatement ps = null;
+        PreparedStatement psFuncionario = null;
+        PreparedStatement psGerente = null;
         
         try {
-            ps = Conexao.getConexao().prepareStatement(sql);
-            ps.setString(1, gerente.getMatricula());
-            ps.setString(2, gerente.getNome());
-            ps.setString(3, String.valueOf(gerente.getIdade()));
-            ps.setString(4, gerente.getDepartamento());
+        
+            // Inserir dados na tabela funcionario
+            String sqlFuncionario = "INSERT INTO funcionario(matricula, nome, idade) VALUES (?, ?, ?)";
+            psFuncionario = Conexao.getConexao().prepareStatement(sqlFuncionario);
+            psFuncionario.setString(1, gerente.getMatricula());
+            psFuncionario.setString(2, gerente.getNome());
+            psFuncionario.setInt(3, gerente.getIdade());
+            psFuncionario.executeUpdate();
             
-            ps.execute();
-            ps.close();
+            // Inserir dados na tabela gerente, referenciando o idFuncionario inserido
+            String sqlGerente = "INSERT INTO gerente(idFuncionario, departamento) VALUES (LAST_INSERT_ID(), ?)";
+            psGerente = Conexao.getConexao().prepareStatement(sqlGerente);
+            psGerente.setString(1, gerente.getDepartamento());
+            psGerente.executeUpdate();
+            
+            
         } catch (SQLException e) {
             e.printStackTrace();
         } 
         
     }
     
-    public static void listarGerentes() {
+    public static DefaultListModel<String> listarGerentes() {
+        DefaultListModel<String> listaGerentes = new DefaultListModel<>();
         try {
             /*Cria um objeto Statement a partir do método "Conexao.getConexao", este objeto Statement não possui atributos porém tem vários métodos para executar instruções sql: https://docs.oracle.com/javase/8/docs/api/java/sql/Statement.html */
             Statement stmt = Conexao.getConexao().createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM gerente");
+            ResultSet rs = stmt.executeQuery(
+                "SELECT funcionario.id, funcionario.matricula, funcionario.nome, funcionario.idade, gerente.departamento " +
+                "FROM funcionario " +
+                "INNER JOIN gerente ON funcionario.id = gerente.idFuncionario");
 
             while (rs.next()) {
-                String coluna1 = rs.getString("idGerente");
+                String coluna1 = rs.getString("id");
                 String coluna2 = rs.getString("matricula");
                 String coluna3 = rs.getString("nome");
                 String coluna4 = String.valueOf(rs.getString("idade"));
                 String coluna5 = rs.getString("departamento");
-                System.out.println(
-                        "ID: " + coluna1 + ", matricula: " + coluna2 + " nome: " + coluna3 + " idade: " + coluna4 + " departamento: " + coluna5);
+                String gerente = (
+                        "ID: " + coluna1 + " | matricula: " + coluna2 + " | nome: " + coluna3 + " | idade: " + coluna4 + " | departamento: " + coluna5);
+                listaGerentes.addElement(gerente);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return listaGerentes;
     }
     
-    public static void removerGerentes(String maneira, String variavel) {
-        String sql = "";
-        if (maneira.equals("id")) {
-            sql = "DELETE FROM gerente WHERE idGerente = ?";
-        } else if(maneira.equals("matricula")) {
-            sql = "DELETE FROM gerente WHERE matricula = ?";
-        } else if (maneira.equals("nome")) {
-            sql = "DELETE FROM gerente WHERE nome = ?";
-        } else if(maneira.equals("departamento")){
-            sql = "DELETE FROM gerente WHERE departamento = ?";
-        }
-
-        try (PreparedStatement ps = Conexao.getConexao().prepareStatement(sql)) {
-            
-            ps.setString(1, variavel);
-            int rowsAffected = ps.executeUpdate();
+    public static void removerGerentes(String id) {
+        String rGerente = "DELETE FROM gerente WHERE idFuncionario = ?";
+        String rFuncionario = "DELETE FROM funcionario WHERE id = ?";  
+        try {
+            PreparedStatement ps1 = Conexao.getConexao().prepareStatement(rGerente);
+            ps1.setString(1, id);
+            PreparedStatement ps2 = Conexao.getConexao().prepareStatement(rFuncionario);
+            ps2.setString(1, id);
+            int rowsAffected = ps1.executeUpdate();
             
             if (rowsAffected > 0) {
-                System.out.println("Gerente removido com sucesso.");
+                JOptionPane.showMessageDialog(null, "Gerente removido com sucesso");
             } else {
                 System.out.println("Nenhum gerente encontrado com o ID fornecido.");
             }
@@ -140,65 +145,72 @@ public class Operations {
     }
 
     public static void cadastrarOperador(Operador operador){
-        String sql = "INSERT INTO operador(matricula, nome, idade, funcao) VALUES(?, ?, ?, ?)";
-        PreparedStatement ps = null;
+        PreparedStatement psFuncionario = null;
+        PreparedStatement psOperador = null;
         
         try {
-            ps = Conexao.getConexao().prepareStatement(sql);
-            ps.setString(1, operador.getMatricula());
-            ps.setString(2, operador.getNome());
-            ps.setString(3, String.valueOf(operador.getIdade()));
-            ps.setString(4, operador.getFuncao());
+        
+            // Inserir dados na tabela funcionario
+            String sqlFuncionario = "INSERT INTO funcionario(matricula, nome, idade) VALUES (?, ?, ?)";
+            psFuncionario = Conexao.getConexao().prepareStatement(sqlFuncionario);
+            psFuncionario.setString(1, operador.getMatricula());
+            psFuncionario.setString(2, operador.getNome());
+            psFuncionario.setInt(3, operador.getIdade());
+            psFuncionario.executeUpdate();
             
-            ps.execute();
-            ps.close();
+            // Inserir dados na tabela Operador, referenciando o idFuncionario inserido
+            String sqlOperador = "INSERT INTO Operador(idFuncionario, funcao) VALUES (LAST_INSERT_ID(), ?)";
+            psOperador = Conexao.getConexao().prepareStatement(sqlOperador);
+            psOperador.setString(1, operador.getFuncao());
+            psOperador.executeUpdate();
+            
+            
         } catch (SQLException e) {
             e.printStackTrace();
         } 
         
     }
     
-    public static void listarOperador() {
+    public static DefaultListModel<String> listarOperador() {
+        DefaultListModel<String> listaOperadores = new DefaultListModel<>();
         try {
             /*Cria um objeto Statement a partir do método "Conexao.getConexao", este objeto Statement não possui atributos porém tem vários métodos para executar instruções sql: https://docs.oracle.com/javase/8/docs/api/java/sql/Statement.html */
             Statement stmt = Conexao.getConexao().createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM operador");
+            ResultSet rs = stmt.executeQuery(
+                "SELECT funcionario.id, funcionario.matricula, funcionario.nome, funcionario.idade, operador.funcao " +
+                "FROM funcionario " +
+                "INNER JOIN operador ON funcionario.id = operador.idFuncionario");
 
             while (rs.next()) {
-                String coluna1 = rs.getString("idOperador");
+                String coluna1 = rs.getString("id");
                 String coluna2 = rs.getString("matricula");
                 String coluna3 = rs.getString("nome");
                 String coluna4 = String.valueOf(rs.getString("idade"));
                 String coluna5 = rs.getString("funcao");
-                System.out.println(
-                        "ID: " + coluna1 + ", matricula: " + coluna2 + " nome: " + coluna3 + " idade: " + coluna4 + " função: " + coluna5);
+                String Operador = (
+                        "ID: " + coluna1 + " | matricula: " + coluna2 + " | nome: " + coluna3 + " | idade: " + coluna4 + " | função: " + coluna5);
+                listaOperadores.addElement(Operador);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return listaOperadores;
     }
     
-    public static void removerOperador(String maneira, String variavel) {
-        String sql = "";
-        if (maneira.equals("id")) {
-            sql = "DELETE FROM operador WHERE idOperador = ?";
-        } else if(maneira.equals("matricula")) {
-            sql = "DELETE FROM operador WHERE matricula = ?";
-        } else if (maneira.equals("nome")) {
-            sql = "DELETE FROM operador WHERE nome = ?";
-        } else if(maneira.equals("funcao")){
-            sql = "DELETE FROM operador WHERE funcao = ?";
-        }
-
-        try (PreparedStatement ps = Conexao.getConexao().prepareStatement(sql)) {
-            
-            ps.setString(1, variavel);
-            int rowsAffected = ps.executeUpdate();
+    public static void removerOperador(String id) {
+        String rOperador = "DELETE FROM Operador WHERE idFuncionario = ?";
+        String rFuncionario = "DELETE FROM funcionario WHERE id = ?";  
+        try {
+            PreparedStatement ps1 = Conexao.getConexao().prepareStatement(rOperador);
+            ps1.setString(1, id);
+            PreparedStatement ps2 = Conexao.getConexao().prepareStatement(rFuncionario);
+            ps2.setString(1, id);
+            int rowsAffected = ps1.executeUpdate();
             
             if (rowsAffected > 0) {
-                System.out.println("Operador removido com sucesso.");
+                JOptionPane.showMessageDialog(null, "Operador removido com sucesso");
             } else {
-                System.out.println("Nenhum operador encontrado com o ID fornecido.");
+                System.out.println("Nenhum Operador encontrado com o ID fornecido.");
             }
             
         } catch (SQLException e) {
