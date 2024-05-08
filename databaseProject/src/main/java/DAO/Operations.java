@@ -62,7 +62,7 @@ public class Operations {
                 JOptionPane.showMessageDialog(null, "Funcionário removido com sucesso");
 
             } else {
-                System.out.println("Nenhum funcionário encontrado com o ID fornecido.");
+                JOptionPane.showMessageDialog(null,"Nenhum funcionário encontrado com o ID fornecido.");
             }
             
         } catch (SQLException e) {
@@ -132,11 +132,12 @@ public class Operations {
             PreparedStatement ps2 = Conexao.getConexao().prepareStatement(rFuncionario);
             ps2.setString(1, id);
             int rowsAffected = ps1.executeUpdate();
+            ps2.executeUpdate();
             
             if (rowsAffected > 0) {
                 JOptionPane.showMessageDialog(null, "Gerente removido com sucesso");
             } else {
-                System.out.println("Nenhum gerente encontrado com o ID fornecido.");
+                JOptionPane.showMessageDialog(null, "Nenhum gerente encontrado com o ID fornecido.");
             }
             
         } catch (SQLException e) {
@@ -206,11 +207,12 @@ public class Operations {
             PreparedStatement ps2 = Conexao.getConexao().prepareStatement(rFuncionario);
             ps2.setString(1, id);
             int rowsAffected = ps1.executeUpdate();
+            ps2.executeUpdate();
             
             if (rowsAffected > 0) {
                 JOptionPane.showMessageDialog(null, "Operador removido com sucesso");
             } else {
-                System.out.println("Nenhum Operador encontrado com o ID fornecido.");
+                JOptionPane.showMessageDialog(null,"Nenhum Operador encontrado com o ID fornecido.");
             }
             
         } catch (SQLException e) {
