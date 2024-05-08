@@ -3,6 +3,8 @@ package DAO;
 import java.sql.*;
 import conection.Conexao;
 import entity.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -27,23 +29,25 @@ public class Operations {
         
     }
     
-    public static void listarFuncionarios() {
+    public static DefaultListModel<String> listarFuncionarios() {
+        DefaultListModel<String> listaFuncionarios = new DefaultListModel<>();
         try {
             /*Cria um objeto Statement a partir do método "Conexao.getConexao", este objeto Statement não possui atributos porém tem vários métodos para executar instruções sql: https://docs.oracle.com/javase/8/docs/api/java/sql/Statement.html */
             Statement stmt = Conexao.getConexao().createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM funcionario");
-
             while (rs.next()) {
                 String coluna1 = rs.getString("id");
                 String coluna2 = rs.getString("matricula");
                 String coluna3 = rs.getString("nome");
                 String coluna4 = String.valueOf(rs.getString("idade"));
-                System.out.println(
-                        "ID: " + coluna1 + ", matricula: " + coluna2 + " nome: " + coluna3 + " idade: " + coluna4);
+                String funcionario = 
+                        "ID: " + coluna1 + " | matricula: " + coluna2 + " | nome: " + coluna3 + " | idade: " + coluna4;
+                listaFuncionarios.addElement(funcionario);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return listaFuncionarios;
     }
     
     public static void removerFuncionario(String id) {
@@ -55,7 +59,8 @@ public class Operations {
             int rowsAffected = ps.executeUpdate();
             
             if (rowsAffected > 0) {
-                System.out.println("Funcionário removido com sucesso.");
+                JOptionPane.showMessageDialog(null, "Funcionário removido com sucesso");
+
             } else {
                 System.out.println("Nenhum funcionário encontrado com o ID fornecido.");
             }
@@ -92,7 +97,8 @@ public class Operations {
         
     }
     
-    public static void listarGerentes() {
+    public static DefaultListModel<String> listarGerentes() {
+        DefaultListModel<String> listaGerentes = new DefaultListModel<>();
         try {
             /*Cria um objeto Statement a partir do método "Conexao.getConexao", este objeto Statement não possui atributos porém tem vários métodos para executar instruções sql: https://docs.oracle.com/javase/8/docs/api/java/sql/Statement.html */
             Statement stmt = Conexao.getConexao().createStatement();
@@ -107,12 +113,14 @@ public class Operations {
                 String coluna3 = rs.getString("nome");
                 String coluna4 = String.valueOf(rs.getString("idade"));
                 String coluna5 = rs.getString("departamento");
-                System.out.println(
-                        "ID: " + coluna1 + "|matricula: " + coluna2 + "|nome: " + coluna3 + "|idade: " + coluna4 + "|departamento: " + coluna5);
+                String gerente = (
+                        "ID: " + coluna1 + " | matricula: " + coluna2 + " | nome: " + coluna3 + " | idade: " + coluna4 + " | departamento: " + coluna5);
+                listaGerentes.addElement(gerente);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return listaGerentes;
     }
     
     public static void removerGerentes(String id) {
@@ -126,7 +134,7 @@ public class Operations {
             int rowsAffected = ps1.executeUpdate();
             
             if (rowsAffected > 0) {
-                System.out.println("Gerente removido com sucesso.");
+                JOptionPane.showMessageDialog(null, "Gerente removido com sucesso");
             } else {
                 System.out.println("Nenhum gerente encontrado com o ID fornecido.");
             }
@@ -163,7 +171,8 @@ public class Operations {
         
     }
     
-    public static void listarOperador() {
+    public static DefaultListModel<String> listarOperador() {
+        DefaultListModel<String> listaOperadores = new DefaultListModel<>();
         try {
             /*Cria um objeto Statement a partir do método "Conexao.getConexao", este objeto Statement não possui atributos porém tem vários métodos para executar instruções sql: https://docs.oracle.com/javase/8/docs/api/java/sql/Statement.html */
             Statement stmt = Conexao.getConexao().createStatement();
@@ -178,12 +187,14 @@ public class Operations {
                 String coluna3 = rs.getString("nome");
                 String coluna4 = String.valueOf(rs.getString("idade"));
                 String coluna5 = rs.getString("funcao");
-                System.out.println(
-                        "ID: " + coluna1 + "|matricula: " + coluna2 + "|nome: " + coluna3 + "|idade: " + coluna4 + "|funcao: " + coluna5);
+                String Operador = (
+                        "ID: " + coluna1 + " | matricula: " + coluna2 + " | nome: " + coluna3 + " | idade: " + coluna4 + " | função: " + coluna5);
+                listaOperadores.addElement(Operador);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return listaOperadores;
     }
     
     public static void removerOperador(String id) {
@@ -197,7 +208,7 @@ public class Operations {
             int rowsAffected = ps1.executeUpdate();
             
             if (rowsAffected > 0) {
-                System.out.println("Operador removido com sucesso.");
+                JOptionPane.showMessageDialog(null, "Operador removido com sucesso");
             } else {
                 System.out.println("Nenhum Operador encontrado com o ID fornecido.");
             }
